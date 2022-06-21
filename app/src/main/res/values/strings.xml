@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">LoremFlickrPictureViewer</string>
+    <string name="search">Search</string>
+    <string name="button_for_save_photo_to_gallery">button for save photo to gallery</string>
+    <string name="save_photo">Save photo</string>
+    <string name="flickr_photo_adapter">flickr_photo_adapter</string>
+    <string name="error_internet_message">Sorry, something went wrong, check your internet connection and try again</string>
+    <string name="creator_name_placeholder">"Created by "</string>
+    <string name="download_link_placeholder">"You can find the photo on the web by this link: "</string>
+    <string name="download_button_explanation_placeholder">\n \n Or download the photo directly to your storage by button below</string>
 </resources>

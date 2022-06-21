@@ -6,6 +6,7 @@ import com.zhadko.loremflickrpictureviewer.R
 import com.zhadko.loremflickrpictureviewer.ui.photoListScreen.PhotoListFragment
 
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)

@@ -3,16 +3,23 @@ package com.zhadko.loremflickrpictureviewer.ui.photoListScreen
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestOptions
+import com.zhadko.loremflickrpictureviewer.R
 import com.zhadko.loremflickrpictureviewer.databinding.FlickrPhotoListItemBinding
 import com.zhadko.loremflickrpictureviewer.models.domainModels.FlickrPhoto
 
+const val TRIGGER_PAGING_ITEM_NUMBER = 1
+
 class PhotoListAdapter(
     private val context: Context,
-    private val click: (FlickrPhoto) -> Unit
+    private val click: (FlickrPhoto) -> Unit,
+    private val itemHasReached: () -> Unit
 ) : ListAdapter<FlickrPhoto, PhotoListAdapter.PhotoViewHolder>(FlickrPictureDiffUtil()) {
 
     class PhotoViewHolder(
@@ -26,7 +33,13 @@ class PhotoListAdapter(
         ) {
             with(binding) {
                 photoAuthorName.text = data.owner
-                Glide.with(context).load(data.file).into(photo)
+                Glide.with(context)
+                    .load(data.file)
+                    .placeholder(R.drawable.ic_launcher_background)
+                    .apply(RequestOptions().override(800, 600))
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(photo)
+                progressBar.isVisible = false
                 root.setOnClickListener {
                     click(data)
                 }
@@ -49,6 +62,9 @@ class PhotoListAdapter(
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
         holder.bind(context, currentList[position], click)
+        if (position == itemCount - TRIGGER_PAGING_ITEM_NUMBER) {
+            itemHasReached()
+        }
     }
 
     class FlickrPictureDiffUtil : DiffUtil.ItemCallback<FlickrPhoto>() {
