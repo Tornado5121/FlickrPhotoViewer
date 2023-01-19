@@ -6,14 +6,16 @@ import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
 import android.widget.SearchView
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhadko.loremflickrpictureviewer.R
+import com.zhadko.loremflickrpictureviewer.base.BaseFragment
 import com.zhadko.loremflickrpictureviewer.databinding.PhotoListFragmentBinding
 import com.zhadko.loremflickrpictureviewer.ui.detailedPhotoScreen.DetailedPhotoFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class PhotoListFragment : Fragment() {
+class PhotoListFragment : BaseFragment<PhotoListFragmentBinding>(
+    vbFactory = PhotoListFragmentBinding::inflate
+) {
 
     private val groupAnimFadeIn: LayoutAnimationController by lazy {
         AnimationUtils.loadLayoutAnimation(
@@ -26,7 +28,6 @@ class PhotoListFragment : Fragment() {
     private val fadeIn by lazy { AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in) }
 
     private val photoListViewModel by viewModel<PhotoListViewModel>()
-    private lateinit var binding: PhotoListFragmentBinding
 
     private val photoListAdapter by lazy {
         PhotoListAdapter(requireContext(), {
@@ -46,14 +47,6 @@ class PhotoListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = PhotoListFragmentBinding.inflate(inflater, container, false)
-        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
