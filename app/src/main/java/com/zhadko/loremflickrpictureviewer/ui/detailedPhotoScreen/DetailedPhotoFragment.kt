@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.zhadko.loremflickrpictureviewer.R
 import com.zhadko.loremflickrpictureviewer.databinding.DetailedPhotoFragmentBinding
+import com.zhadko.loremflickrpictureviewer.utils.isPermissionsGranted
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -55,7 +56,7 @@ class DetailedPhotoFragment : Fragment() {
         detailedPhotoViewModel.getPhotoByFileName()
 
         binding.saveGalleyButton.setOnClickListener {
-            if (detailedPhotoViewModel.checkPermission()) {
+            if (isPermissionsGranted(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
                 detailedPhotoViewModel.savePhotoToGallery(photoUrl)
             } else {
                 requestPermissions(

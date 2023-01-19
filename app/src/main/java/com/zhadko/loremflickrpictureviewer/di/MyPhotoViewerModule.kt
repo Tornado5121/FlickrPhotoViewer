@@ -10,8 +10,6 @@ import com.zhadko.loremflickrpictureviewer.data.repositories.flickrPhotoReposito
 import com.zhadko.loremflickrpictureviewer.data.repositories.flickrPhotoRepository.PhotoRepositoryImpl
 import com.zhadko.loremflickrpictureviewer.data.repositories.loadingRepository.LoadingRepository
 import com.zhadko.loremflickrpictureviewer.data.repositories.loadingRepository.LoadingRepositoryImpl
-import com.zhadko.loremflickrpictureviewer.data.repositories.permissionRepository.PermissionRepository
-import com.zhadko.loremflickrpictureviewer.data.repositories.permissionRepository.PermissionRepositoryImpl
 import com.zhadko.loremflickrpictureviewer.ui.detailedPhotoScreen.DetailedPhotoViewModel
 import com.zhadko.loremflickrpictureviewer.ui.photoListScreen.PhotoListViewModel
 import org.koin.android.ext.koin.androidContext
@@ -19,7 +17,6 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val dataModule = module {
-    single<PermissionRepository> { PermissionRepositoryImpl(androidContext()) }
     single<LoadingRepository> { LoadingRepositoryImpl(androidContext()) }
     single<FlickrPhotoDatabaseRepo> {
         FlickrPhotoDatabaseRepoImpl(
@@ -34,5 +31,5 @@ val dataModule = module {
 
 val viewModelModule = module {
     viewModel { PhotoListViewModel(get()) }
-    viewModel { (id: String) -> DetailedPhotoViewModel(id, get(), get(), get()) }
+    viewModel { (id: String) -> DetailedPhotoViewModel(id, get(), get()) }
 }
