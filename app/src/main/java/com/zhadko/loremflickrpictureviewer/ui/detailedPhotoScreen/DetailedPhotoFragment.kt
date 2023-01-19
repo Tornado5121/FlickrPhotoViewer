@@ -3,34 +3,25 @@ package com.zhadko.loremflickrpictureviewer.ui.detailedPhotoScreen
 import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.zhadko.loremflickrpictureviewer.R
+import com.zhadko.loremflickrpictureviewer.base.BaseFragment
 import com.zhadko.loremflickrpictureviewer.databinding.DetailedPhotoFragmentBinding
 import com.zhadko.loremflickrpictureviewer.utils.isPermissionsGranted
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-class DetailedPhotoFragment : Fragment() {
+class DetailedPhotoFragment : BaseFragment<DetailedPhotoFragmentBinding>(
+    vbFactory = DetailedPhotoFragmentBinding::inflate
+) {
 
     private val detailedPhotoViewModel by viewModel<DetailedPhotoViewModel> {
         parametersOf(requireArguments().getString(MY_PHOTO_ID))
     }
-    private lateinit var binding: DetailedPhotoFragmentBinding
 
     private lateinit var photoUrl: String
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = DetailedPhotoFragmentBinding.inflate(inflater, container, false)
-        return binding.root
-    }
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
