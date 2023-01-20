@@ -5,11 +5,14 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.zhadko.loremflickrpictureviewer.R
 import com.zhadko.loremflickrpictureviewer.base.BaseFragment
 import com.zhadko.loremflickrpictureviewer.databinding.DetailedPhotoFragmentBinding
 import com.zhadko.loremflickrpictureviewer.utils.isPermissionsGranted
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -26,21 +29,24 @@ class DetailedPhotoFragment : BaseFragment<DetailedPhotoFragmentBinding>(
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        detailedPhotoViewModel.flickrPhotoLiveData.observe(viewLifecycleOwner) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            detailedPhotoViewModel.flickrPhoto.collect {
 
-            photoUrl = it.file
+                photoUrl = it.file
 
-            with(binding) {
-                authorName.text = getString(R.string.creator_name_placeholder) + it.owner
-                downloadLink.text = getString(R.string.download_link_placeholder) + it.file +
-                        getString(R.string.download_button_explanation_placeholder)
-                Glide.with(requireContext()).load(photoUrl).into(photo)
+                with(binding) {
+                    authorName.text = getString(R.string.creator_name_placeholder) + it.owner
+                    downloadLink.text = getString(R.string.download_link_placeholder) + it.file +
+                            getString(R.string.download_button_explanation_placeholder)
+                    Glide.with(requireContext()).load(photoUrl).into(photo)
+                }
             }
         }
-
-        detailedPhotoViewModel.errorLiveData.observe(viewLifecycleOwner) {
-            if (it.isNotEmpty()) {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+        viewLifecycleOwner.lifecycleScope.launch {
+            detailedPhotoViewModel.errorMessage.collect { errorMessage ->
+                if (errorMessage.isNotEmpty()) {
+                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+                }
             }
         }
 

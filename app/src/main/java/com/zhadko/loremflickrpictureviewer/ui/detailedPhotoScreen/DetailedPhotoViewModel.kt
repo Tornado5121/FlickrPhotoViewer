@@ -1,14 +1,12 @@
 package com.zhadko.loremflickrpictureviewer.ui.detailedPhotoScreen
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhadko.loremflickrpictureviewer.data.repositories.flickrPhotoRepository.PhotoRepository
 import com.zhadko.loremflickrpictureviewer.data.repositories.loadingRepository.LoadingRepository
 import com.zhadko.loremflickrpictureviewer.models.domainModels.FlickrPhoto
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class DetailedPhotoViewModel(
@@ -17,23 +15,21 @@ class DetailedPhotoViewModel(
     private val loadingRepository: LoadingRepository
 ) : ViewModel() {
 
-    private val mErrorMessageLiveData = MutableLiveData<String>()
-    val errorLiveData: LiveData<String> = mErrorMessageLiveData
+    private val _errorMessage = MutableSharedFlow<String>()
+    val errorMessage = _errorMessage.asSharedFlow()
 
-    private val mFlickrPhotoLiveData = MutableLiveData<FlickrPhoto>()
-    val flickrPhotoLiveData: LiveData<FlickrPhoto> = mFlickrPhotoLiveData
+    private val _flickrPhoto = MutableSharedFlow<FlickrPhoto>()
+    val flickrPhoto = _flickrPhoto.asSharedFlow()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            loadingRepository.errorFlow.collectLatest {
-                mErrorMessageLiveData.postValue(it)
-            }
+            _errorMessage.emit(loadingRepository.errorFlow.value)
         }
     }
 
     fun getPhotoByFileName() {
         viewModelScope.launch(Dispatchers.IO) {
-            mFlickrPhotoLiveData.postValue(photoRepository.getPhotoByFileName(id))
+            _flickrPhoto.emit(photoRepository.getPhotoByFileName(id))
         }
     }
 
