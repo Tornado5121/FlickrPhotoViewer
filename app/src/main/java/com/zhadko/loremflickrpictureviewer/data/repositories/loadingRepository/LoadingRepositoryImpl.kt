@@ -16,8 +16,8 @@ class LoadingRepositoryImpl(
     private val context: Context
 ) : LoadingRepository {
 
-    private val mErrorFlow = MutableStateFlow("")
-    override val errorFlow: StateFlow<String> = mErrorFlow
+    private val _errorFlow = MutableStateFlow("")
+    override val errorFlow: StateFlow<String> = _errorFlow
 
     private fun getBitmap(imageUrl: String): Bitmap {
         return Glide.with(context)
@@ -49,10 +49,10 @@ class LoadingRepositoryImpl(
             val bitMap = getBitmap(imageUrl)
             bitMap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
             Objects.requireNonNull(outputStream)
-            mErrorFlow.value = "Photo is downloaded"
+            _errorFlow.value = "Photo is downloaded"
         } catch (e: Exception) {
             e.printStackTrace()
-            mErrorFlow.value = "Sorry, something went wrong,please, try again later"
+            _errorFlow.value = "Sorry, something went wrong,please, try again later"
         }
     }
 
