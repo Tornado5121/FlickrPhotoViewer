@@ -1,13 +1,16 @@
 package com.zhadko.loremflickrpictureviewer.ui.photoListScreen
 
 import android.os.Bundle
-import android.view.*
-import android.view.animation.AnimationUtils
-import android.view.animation.LayoutAnimationController
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.View
 import android.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhadko.loremflickrpictureviewer.R
+import com.zhadko.loremflickrpictureviewer.animation.fadeGroupIn
+import com.zhadko.loremflickrpictureviewer.animation.fadeIn
+import com.zhadko.loremflickrpictureviewer.animation.fadeOut
 import com.zhadko.loremflickrpictureviewer.base.BaseFragment
 import com.zhadko.loremflickrpictureviewer.databinding.PhotoListFragmentBinding
 import com.zhadko.loremflickrpictureviewer.ui.detailedPhotoScreen.DetailedPhotoFragment
@@ -16,17 +19,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class PhotoListFragment : BaseFragment<PhotoListFragmentBinding>(
     vbFactory = PhotoListFragmentBinding::inflate
 ) {
-
-    private val groupAnimFadeIn: LayoutAnimationController by lazy {
-        AnimationUtils.loadLayoutAnimation(
-            requireContext(),
-            R.anim.view_group_move_in
-        )
-    }
-
-    private val fadeOut by lazy { AnimationUtils.loadAnimation(requireContext(), R.anim.fade_out) }
-    private val fadeIn by lazy { AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in) }
-
     private val photoListViewModel by viewModel<PhotoListViewModel>()
 
     private val photoListAdapter by lazy {
@@ -39,37 +31,37 @@ class PhotoListFragment : BaseFragment<PhotoListFragmentBinding>(
                 .addToBackStack("")
                 .commit()
         }, {
-            binding.progressBar.animation = fadeIn
-            photoListViewModel.getNextPagePhotosList()
-        })
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        with(binding) {
-            photoList.adapter = photoListAdapter
-            photoList.layoutManager = LinearLayoutManager(requireContext())
+            binding.progressBar.animation = fadeIn()
+                photoListViewModel.getNextPagePhotosList()
+            })
         }
 
-        photoListViewModel.myPhotoListLiveData.observe(viewLifecycleOwner) {
-            if (it.isEmpty()) {
-                binding.errorMessageView.text =
-                    getString(R.string.error_internet_message)
-                binding.progressBar.animation = fadeOut
-            } else {
-                binding.errorMessageView.isVisible = false
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            setHasOptionsMenu(true)
+        }
+
+        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+            super.onViewCreated(view, savedInstanceState)
+
+            with(binding) {
+                photoList.adapter = photoListAdapter
+                photoList.layoutManager = LinearLayoutManager(requireContext())
+            }
+
+            photoListViewModel.myPhotoListLiveData.observe(viewLifecycleOwner) {
+                if (it.isEmpty()) {
+                    binding.errorMessageView.text =
+                        getString(R.string.error_internet_message)
+                    binding.progressBar.animation = fadeOut()
+                } else {
+                    binding.errorMessageView.isVisible = false
                 photoListAdapter.submitList(it)
-                binding.progressBar.animation = fadeOut
+                binding.progressBar.animation = fadeOut()
             }
 
             with(binding) {
-                photoList.layoutAnimation = groupAnimFadeIn
+                photoList.layoutAnimation = fadeGroupIn()
                 photoList.scheduleLayoutAnimation()
             }
         }
@@ -77,7 +69,7 @@ class PhotoListFragment : BaseFragment<PhotoListFragmentBinding>(
         binding.refreshLayout.setOnRefreshListener {
             with(binding) {
                 refreshLayout.isRefreshing = false
-                progressBar.animation = fadeIn
+                progressBar.animation = fadeIn()
             }
             photoListViewModel.getNextPagePhotosList()
         }
