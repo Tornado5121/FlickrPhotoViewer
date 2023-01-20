@@ -1,40 +1,49 @@
 package com.zhadko.loremflickrpictureviewer.ui.photoListScreen
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhadko.loremflickrpictureviewer.data.repositories.flickrPhotoRepository.PhotoRepository
 import com.zhadko.loremflickrpictureviewer.models.domainModels.FlickrPhoto
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class PhotoListViewModel(
     private val photoRepository: PhotoRepository
 ) : ViewModel() {
 
-    private val mMyPhotoListLiveData = MutableLiveData<List<FlickrPhoto>>()
-    val myPhotoListLiveData: LiveData<List<FlickrPhoto>> = mMyPhotoListLiveData
+    private val _mySearchFlow = MutableStateFlow("sea")
+
+    private val _myPhotoListLiveData = MutableStateFlow<List<FlickrPhoto>>(emptyList())
+    val myPhotoListLiveData = _myPhotoListLiveData.asStateFlow()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            mMyPhotoListLiveData.postValue(photoRepository.getPhotoList())
+            _myPhotoListLiveData.update { photoRepository.getPhotoList(_mySearchFlow.value) }
         }
     }
 
     fun getNextPagePhotosList() {
         viewModelScope.launch(Dispatchers.IO) {
-            val photoList = photoRepository.getPhotoList()
-            val currentList = mMyPhotoListLiveData.value ?: listOf()
-            mMyPhotoListLiveData.postValue(currentList + photoList)
+            val photoList = photoRepository.getPhotoList(_mySearchFlow.value)
+            val currentList = _myPhotoListLiveData.value
+            _myPhotoListLiveData.emit(currentList + photoList)
         }
     }
 
     fun searchPhotosByTag(photoTag: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            photoRepository.setSearchTag(photoTag)
-            val photoList = photoRepository.getPhotoList()
-            mMyPhotoListLiveData.postValue(photoList)
+            setSearchTag(photoTag)
+            val photoList = photoRepository.getPhotoList(photoTag)
+            _myPhotoListLiveData.update { photoList }
+        }
+    }
+
+    fun setSearchTag(photoTag: String) {
+        if (photoTag.isNotEmpty()) {
+            _mySearchFlow.update { photoTag }
         }
     }
 

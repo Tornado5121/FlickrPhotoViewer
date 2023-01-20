@@ -6,6 +6,7 @@ import android.view.MenuInflater
 import android.view.View
 import android.widget.SearchView
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhadko.loremflickrpictureviewer.R
 import com.zhadko.loremflickrpictureviewer.animation.fadeGroupIn
@@ -14,6 +15,8 @@ import com.zhadko.loremflickrpictureviewer.animation.fadeOut
 import com.zhadko.loremflickrpictureviewer.base.BaseFragment
 import com.zhadko.loremflickrpictureviewer.databinding.PhotoListFragmentBinding
 import com.zhadko.loremflickrpictureviewer.ui.detailedPhotoScreen.DetailedPhotoFragment
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PhotoListFragment : BaseFragment<PhotoListFragmentBinding>(
@@ -44,15 +47,17 @@ class PhotoListFragment : BaseFragment<PhotoListFragmentBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupView()
-        photoListViewModel.myPhotoListLiveData.observe(viewLifecycleOwner) {
-            if (it.isEmpty()) {
-                binding.errorMessageView.text =
-                    getString(R.string.error_internet_message)
-                binding.progressBar.animation = fadeOut()
-            } else {
-                binding.errorMessageView.isVisible = false
-                photoListAdapter.submitList(it)
-                binding.progressBar.animation = fadeOut()
+        viewLifecycleOwner.lifecycleScope.launch {
+            photoListViewModel.myPhotoListLiveData.collect {
+                if (it.isEmpty()) {
+                    binding.errorMessageView.text =
+                        getString(R.string.error_internet_message)
+                    binding.progressBar.animation = fadeOut()
+                } else {
+                    binding.errorMessageView.isVisible = false
+                    photoListAdapter.submitList(it)
+                    binding.progressBar.animation = fadeOut()
+                }
             }
         }
     }
