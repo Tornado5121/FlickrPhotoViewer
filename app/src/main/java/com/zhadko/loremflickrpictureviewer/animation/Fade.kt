@@ -9,9 +9,6 @@ import com.zhadko.loremflickrpictureviewer.R
 fun Fragment.fadeIn(): Animation =
     AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
 
-fun Fragment.fadeOut(): Animation =
-    AnimationUtils.loadAnimation(requireContext(), R.anim.fade_out)
-
 fun Fragment.fadeGroupIn(): LayoutAnimationController =
     AnimationUtils.loadLayoutAnimation(
         requireContext(),
