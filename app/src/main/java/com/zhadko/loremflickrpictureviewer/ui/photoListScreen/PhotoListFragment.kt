@@ -50,7 +50,7 @@ class PhotoListFragment : BaseFragment<PhotoListFragmentBinding>(
     }
 
     private fun setupObservers() {
-        collectOnLifecycle(photoListViewModel.myPhotoListLiveData, collect = ::handleState)
+        collectOnLifecycle(photoListViewModel.myPhotoList, collect = ::handleState)
     }
 
     private fun handleState(photoList: List<FlickrPhoto>) {

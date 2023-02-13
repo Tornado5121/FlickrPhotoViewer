@@ -14,22 +14,22 @@ class PhotoListViewModel(
     private val photoRepository: PhotoRepository
 ) : ViewModel() {
 
-    private val _mySearchFlow = MutableStateFlow("sea")
+    private val _searchTag = MutableStateFlow("sea")
 
-    private val _myPhotoListLiveData = MutableStateFlow<List<FlickrPhoto>>(emptyList())
-    val myPhotoListLiveData = _myPhotoListLiveData.asStateFlow()
+    private val _myPhotoList = MutableStateFlow<List<FlickrPhoto>>(emptyList())
+    val myPhotoList = _myPhotoList.asStateFlow()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            _myPhotoListLiveData.update { photoRepository.getPhotoList(_mySearchFlow.value) }
+            _myPhotoList.update { photoRepository.getPhotoList(_searchTag.value) }
         }
     }
 
     fun getNextPagePhotosList() {
         viewModelScope.launch(Dispatchers.IO) {
-            val photoList = photoRepository.getPhotoList(_mySearchFlow.value)
-            val currentList = _myPhotoListLiveData.value
-            _myPhotoListLiveData.emit(currentList + photoList)
+            val photoList = photoRepository.getPhotoList(_searchTag.value)
+            val currentList = _myPhotoList.value
+            _myPhotoList.emit(currentList + photoList)
         }
     }
 
@@ -37,13 +37,13 @@ class PhotoListViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             setSearchTag(photoTag)
             val photoList = photoRepository.getPhotoList(photoTag)
-            _myPhotoListLiveData.update { photoList }
+            _myPhotoList.update { photoList }
         }
     }
 
     fun setSearchTag(photoTag: String) {
         if (photoTag.isNotEmpty()) {
-            _mySearchFlow.update { photoTag }
+            _searchTag.update { photoTag }
         }
     }
 
