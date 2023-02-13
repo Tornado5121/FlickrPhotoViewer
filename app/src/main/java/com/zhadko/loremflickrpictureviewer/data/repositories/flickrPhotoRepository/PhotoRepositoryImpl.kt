@@ -24,7 +24,11 @@ class PhotoRepositoryImpl(
             photoList
         } catch (e: Exception) {
             e.printStackTrace()
-            flickrPhotoDatabaseRepo.getPhotoList()
+            if (flickrPhotoDatabaseRepo.getPhotoList().isNotEmpty()) {
+                flickrPhotoDatabaseRepo.getPhotoList()
+            } else {
+                listOf(FlickrPhoto("my_custom_error_sdrwerdcs", " error"))
+            }
         }
     }
 

@@ -50,18 +50,18 @@ class PhotoListFragment : BaseFragment<PhotoListFragmentBinding>(
     }
 
     private fun setupObservers() {
-        collectOnLifecycle(photoListViewModel.myPhotoList, collect = ::handleState)
+        collectOnLifecycle(photoListViewModel.myPhotoList, collect = ::renderItems)
     }
 
-    private fun handleState(photoList: List<FlickrPhoto>) {
-        if (photoList.isEmpty()) {
-            binding.errorMessageView.text =
-                getString(R.string.error_internet_message)
-            binding.progressBar.animation = fadeOut()
-        } else {
+    private fun renderItems(photoList: List<FlickrPhoto>) {
+        if (photoList.isNotEmpty() && photoList[0].file != "my_custom_error_sdrwerdcs") {
             binding.errorMessageView.isVisible = false
             photoListAdapter.submitList(photoList)
             binding.progressBar.animation = fadeOut()
+        } else {
+            binding.errorMessageView.isVisible = false
+            binding.progressBar.animation = fadeOut()
+            binding.errorMessageView.text = context?.getText(R.string.error_internet_message)
         }
     }
 
