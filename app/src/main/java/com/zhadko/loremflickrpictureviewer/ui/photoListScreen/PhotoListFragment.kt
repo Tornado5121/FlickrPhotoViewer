@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.zhadko.loremflickrpictureviewer.R
 import com.zhadko.loremflickrpictureviewer.animation.fadeGroupIn
 import com.zhadko.loremflickrpictureviewer.animation.fadeIn
-import com.zhadko.loremflickrpictureviewer.animation.fadeOut
 import com.zhadko.loremflickrpictureviewer.base.BaseFragment
 import com.zhadko.loremflickrpictureviewer.databinding.PhotoListFragmentBinding
 import com.zhadko.loremflickrpictureviewer.models.domainModels.FlickrPhoto
@@ -55,12 +54,12 @@ class PhotoListFragment : BaseFragment<PhotoListFragmentBinding>(
 
     private fun renderItems(photoList: List<FlickrPhoto>) {
         if (photoList.isNotEmpty() && photoList[0].file != "my_custom_error_sdrwerdcs") {
-            binding.errorMessageView.isVisible = false
             photoListAdapter.submitList(photoList)
-            binding.progressBar.animation = fadeOut()
-        } else {
+            binding.progressBar.isVisible = false
             binding.errorMessageView.isVisible = false
-            binding.progressBar.animation = fadeOut()
+        } else {
+            binding.progressBar.isVisible = false
+            binding.errorMessageView.isVisible = false
             binding.errorMessageView.text = context?.getText(R.string.error_internet_message)
         }
     }
