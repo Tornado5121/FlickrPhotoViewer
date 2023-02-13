@@ -1,4 +1,7 @@
+enableFeaturePreview("VERSION_CATALOGS")
+
 pluginManagement {
+    includeBuild("plugins")
     repositories {
         gradlePluginPortal()
         google()
@@ -13,4 +16,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "LoremFlickrPictureViewer"
-include ':app'
+include(":app")
